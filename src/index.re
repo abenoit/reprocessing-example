@@ -1,11 +1,36 @@
 open Reprocessing;
 
-let setup = env => Env.size(~width=600, ~height=600, env);
+let screen_width = 600;
+let screen_height = 600;
 
-let draw = (_state, env) => {
-  Draw.background(Utils.color(~r=255, ~g=217, ~b=229, ~a=255), env);
-  Draw.fill(Utils.color(~r=41, ~g=166, ~b=244, ~a=255), env);
-  Draw.rect(~pos=(150, 150), ~width=300, ~height=300, env);
+type fruitState = {
+  posX: int,
+  posY: int,
+  image: imageT,
+};
+
+let setup = env => {
+  Env.size(~width=screen_width, ~height=screen_height, env);
+  {
+    posX: 0,
+    posY: screen_height,
+    image: Draw.loadImage(~filename="assets/apple.png", ~isPixel=true, env),
+  };
+};
+
+let draw = (state, env) => {
+  Draw.clear(env);
+  Draw.subImage(
+    state.image,
+    ~pos=(state.posX, state.posY),
+    ~width=300,
+    ~height=300,
+    ~texPos=(0, 0),
+    ~texWidth=551,
+    ~texHeight=600,
+    env,
+  );
+  {...state, posY: state.posY - 1};
 };
 
 run(~setup, ~draw, ());
